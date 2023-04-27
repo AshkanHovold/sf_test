@@ -35,7 +35,8 @@ export class InputHandler {
     let toReturn: Person[] = [];
     let processedLines: Line[] = this.getSplitLines(lines);
     let personSections: Section[] = this.getPersonSections(processedLines);
-    return this.getPersonFromPersonSections(personSections);
+    toReturn = this.getPersonFromPersonSections(personSections);
+    return toReturn;
   }
   getPersonFromPersonSections(personSections: Section[]): Person[] {
     let toReturn: Person[] = [];
