@@ -9,7 +9,7 @@ export type Person = {
 export type Address = {
   street: string;
   city: string;
-  streetNr: string | null;
+  zipcode: string | null;
 };
 
 export type Phone = {

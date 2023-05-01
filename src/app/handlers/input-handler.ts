@@ -100,7 +100,7 @@ export class InputHandler {
       toReturn = {
         street: addressLine.section1,
         city: addressLine.section2,
-        streetNr: addressLine.section3,
+        zipcode: addressLine.section3,
       };
     }
     return toReturn;
