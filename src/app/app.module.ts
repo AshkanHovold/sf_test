@@ -9,13 +9,13 @@ import { StartComponent } from './pages/start/start.component';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
+  imports: [BrowserModule, AppRoutingModule, FormsModule],
   declarations: [
     AppComponent,
     StartComponent,
     SourceInputComponent,
     SourceOutputComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })

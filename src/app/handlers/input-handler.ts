@@ -8,10 +8,26 @@ import {
   Section,
   Phone,
 } from '../types/types';
+import { js2xml } from 'xml-js';
 
 export class InputHandler {
-  processString(inpStr: string): People {
+  convertStringToXml(inpString: string): string {
+    let people = this.processString(inpString);
+    let obj = { people };
+    const options = {
+      compact: true,
+      ignoreComment: true,
+      spaces: 4,
+    };
+    return js2xml(obj, options);
+  }
+
+  processString(inpStr: string): People | null {
+    if (!inpStr) {
+      return null;
+    }
     let lines = inpStr.split('\n');
+
     return this.getPeople(lines);
   }
   getPeople(lines: string[]): People {
@@ -38,22 +54,29 @@ export class InputHandler {
     toReturn = this.getPersonFromPersonSections(personSections);
     return toReturn;
   }
+
   getPersonFromPersonSections(personSections: Section[]): Person[] {
     let toReturn: Person[] = [];
+
     for (const section of personSections) {
+      let familySections = this.getFamilySections(section);
+      section.lines = section.lines.filter(
+        (line) => !familySections.some((fs) => fs.lines.includes(line))
+      );
+
       let toPush: Person = {
         firstname: this.getFirstName(section),
         lastname: this.getLastName(section),
         address: this.getAddress(section),
         phone: this.getPhone(section),
-        family: this.getFamily(section),
+        family: this.getFamilyFromFamilySections(familySections),
       };
       toReturn.push(toPush);
     }
     return toReturn;
   }
-  getFamily(section: Section): Family[] | null {
-    let toReturn: Family[] | null = null;
+
+  getFamilySections(section: Section): Section[] {
     let familySections: Section[] = [];
     let currentSection: Section | null = null;
 
@@ -67,21 +90,29 @@ export class InputHandler {
         currentSection.lines.push(line);
       }
     }
-    if (familySections.length > 0) {
-      toReturn = [];
-      for (const family of familySections) {
-        let toPush: Family = {
-          name: this.getNameFamily(family),
-          born: this.getBornFamily(family),
-          address: this.getAddress(family),
-          phone: this.getPhone(family),
-        };
-        toReturn.push(toPush);
-      }
+
+    return familySections;
+  }
+
+  getFamilyFromFamilySections(familySections: Section[]): Family[] | null {
+    if (familySections.length === 0) {
+      return null;
+    }
+
+    let toReturn: Family[] = [];
+    for (const family of familySections) {
+      let toPush: Family = {
+        name: this.getNameFamily(family),
+        born: this.getBornFamily(family),
+        address: this.getAddress(family),
+        phone: this.getPhone(family),
+      };
+      toReturn.push(toPush);
     }
 
     return toReturn;
   }
+
   getPhone(section: Section): Phone | null {
     let phoneLine = section.lines.find((l) => l.lineType === 'T');
     let toReturn: Phone | null = null;

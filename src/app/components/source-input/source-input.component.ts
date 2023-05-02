@@ -8,34 +8,45 @@ import { js2xml } from 'xml-js';
   styleUrls: ['./source-input.component.scss'],
 })
 export class SourceInputComponent implements OnInit {
-  srcInput: string = `
-  P|Victoria|Bernadotte
-  T|070-0101010|0459-123456
-  A|Haga Slott|Stockholm|101
-  F|Estelle|2012
-  A|Solliden|Öland|10002
-  F|Oscar|2016
-  T|0702-020202|02-202020
-  P|Joe|Biden
-  A|White House|Washington, D.C
-  `;
-  inputHandler: InputHandler;
   @Output() changed: EventEmitter<string> = new EventEmitter<string>();
+  srcInput: string | null = null;
+  inputHandler: InputHandler;
 
-  srcChanged(event: any) {
-    let result = this.inputHandler.processString(event.target.value);
-    let obj = { people: result };
-    let json = JSON.stringify(obj);
-    const options = {
-      compact: true,
-      ignoreComment: true,
-      spaces: 4,
-    };
-    const xml = js2xml(JSON.parse(json), options);
-    this.changed.emit(xml);
-  }
   constructor() {
     this.inputHandler = new InputHandler();
+    this.srcInput = `
+    P|Victoria|Bernadotte
+    T|070-0101010|0459-123456
+    A|Haga Slott|Stockholm|101
+    F|Estelle|2012
+    A|Solliden|Öland|10002
+    F|Oscar|2016
+    T|0702-020202|02-202020
+    P|Joe|Biden
+    A|White House|Washington, D.C
+    `;
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const event = {
+      target: {
+        value: `
+    P|Victoria|Bernadotte
+    T|070-0101010|0459-123456
+    A|Haga Slott|Stockholm|101
+    F|Estelle|2012
+    A|Solliden|Öland|10002
+    F|Oscar|2016
+    T|0702-020202|02-202020
+    P|Joe|Biden
+    A|White House|Washington, D.C
+    `,
+      },
+    };
+    this.srcChanged(event);
+  }
+  srcChanged(event: any) {
+    let xml = this.inputHandler.convertStringToXml(event.target.value);
+
+    this.changed.emit(xml);
+  }
 }

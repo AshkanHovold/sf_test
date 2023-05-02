@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SourceInputComponent } from './source-input.component';
+import { FormsModule } from '@angular/forms';
 
 describe('SourceInputComponent', () => {
   let component: SourceInputComponent;
@@ -8,9 +9,9 @@ describe('SourceInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SourceInputComponent ]
-    })
-    .compileComponents();
+      declarations: [SourceInputComponent],
+      imports: [FormsModule],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SourceInputComponent);
     component = fixture.componentInstance;

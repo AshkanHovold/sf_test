@@ -3,10 +3,7 @@
     <app-source-input (changed)="sourceChanged($event)"></app-source-input>
   </div>
   <div class="grid-item">
-    <pre *ngIf="xml">
-      {{xml}}
-    </pre>
-    <!-- <app-source-output></app-source-output> -->
+    <app-source-output [xml]="xml"></app-source-output>
   </div>
 </div>
 
