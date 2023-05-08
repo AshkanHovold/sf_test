@@ -22,13 +22,69 @@ export class InputHandler {
     return js2xml(obj, options);
   }
 
+  *lineGenerator(inpStr: string): Generator<string> {
+    let start = 0;
+    let end = inpStr.indexOf('\n');
+    while (end !== -1) {
+      yield inpStr.slice(start, end);
+      start = end + 1;
+      end = inpStr.indexOf('\n', start);
+    }
+    if (start < inpStr.length) {
+      yield inpStr.slice(start);
+    }
+  }
+
+  // processString(inpStr: string): People | null {
+  //   if (!inpStr) {
+  //     return null;
+  //   }
+  //   let lines = inpStr.split('\n');
+
+  //   return this.getPeople(lines);
+  // }
   processString(inpStr: string): People | null {
     if (!inpStr) {
       return null;
     }
-    let lines = inpStr.split('\n');
 
-    return this.getPeople(lines);
+    const lines = this.lineGenerator(inpStr);
+    return this.processLineByLine(lines);
+  }
+
+  processLineByLine(lines: Iterable<string>): People {
+    const checkedLines: string[] = this.checkLines(lines);
+    const processedLines: Line[] = this.getSplitLines(checkedLines);
+
+    let personSections: Section[] = [];
+    let currentSection: Section | null = null;
+    const toReturn: People = {
+      person: [],
+    };
+
+    for (const line of processedLines) {
+      if (line.lineType === 'P') {
+        if (currentSection !== null) {
+          personSections.push(currentSection);
+          const persons = this.getPersonFromPersonSections(personSections);
+          toReturn.person.push(...persons);
+          personSections = [];
+        }
+        currentSection = { lines: [] };
+      }
+
+      if (currentSection !== null) {
+        currentSection.lines.push(line);
+      }
+    }
+
+    if (currentSection !== null) {
+      personSections.push(currentSection);
+      const persons = this.getPersonFromPersonSections(personSections);
+      toReturn.person.push(...persons);
+    }
+
+    return toReturn;
   }
   getPeople(lines: string[]): People {
     let checkedLines: string[] = this.checkLines(lines);
@@ -37,7 +93,7 @@ export class InputHandler {
     };
     return toReturn;
   }
-  checkLines(lines: string[]): string[] {
+  checkLines(lines: Iterable<string>): string[] {
     let toReturn: string[] = [];
     for (const line of lines) {
       if (line.trim() === '') {

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { of, Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-start',
@@ -6,10 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./start.component.scss'],
 })
 export class StartComponent {
-  xml: string | null = null;
+  xml$: Observable<string> | null = null;
+
+  nrOfPersons: number = 10;
 
   sourceChanged(xml: string) {
-    debugger;
-    this.xml = xml;
+    this.xml$ = of(xml);
   }
 }

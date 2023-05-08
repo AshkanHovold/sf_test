@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-source-output',
@@ -6,6 +7,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./source-output.component.scss'],
 })
 export class SourceOutputComponent {
-  @Input() xml: string | null = '';
+  @Input() xml$: Observable<string> | null = null;
   srcOutput: string = '';
 }
